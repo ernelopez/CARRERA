@@ -574,6 +574,7 @@ export class Juego {
         this.movimientoEsEspecial = false;
         this.resultadoDesafio = null;
         this.desafioJugador = null;
+        this.iniciarMusica();
     }
 
     actualizarAnimaciones() {
