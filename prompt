@@ -1,0 +1,27 @@
+Quiero hacer un juego de tablero para dos jugadores en js, similar al juego de la oca.
+Las reglas son:
+1. Los jugadores ubican sus tapitas o botones en el casillero de salida.
+2. Tiran un dado para determinar quién comienza. El jugador que obtenga el número más alto iniciará el juego. El turno continuará con el jugador que esté a su derecha.
+3. Cada jugador avanza la cantidad de casilleros indicada por el dado.
+4. Al caer en un casillero especial deberá hacer lo que indique el tablero.
+5. Si un jugador cae en un casillero de DESAFÍO, el jugador ubicado a su izquierda tomará una carta y se la leerá en voz alta. Si responde correctamente, vuelve a tirar el dado y avanza según lo indicado.
+6. Gana quien llega primero al casillero de LLEGADA, sin importar si, al tirar el dado, se
+pasa.
+
+Quiero:
+- Una pantalla inicial similar a la del domino donde se dice el número de jugadores y ponen sus nombres.
+- El tablero tiene una SALIDA, 40 casillas numeradas del 1 al 40, y una LLEGADA. Las casillas son hexágonos conectados, formando una línea.
+- Algunas casillas (4, 10, 15, 23, 26, 30, 35, 39) dicen DESAFIO.
+- Hay 21 cartas de desafío con preguntas de verdadero o falso. Al aparecer la pregunta deberían aparecer dos botones con verdadero/falso.
+- Las casillas 7, 13, 19, 37 dicen PERDÉS UN TURNO. Cuando algún jugador cae allí pierde un turno.
+- Las casillas 21 y 34 dicen RETROCEDÉ 5. Si un jugador cae en ellas, retrocede 5 (es decir, va a la 16 o 29 respectivamente).
+- Las casillas 9 y 28 dicen AVANZÁ 5. Si un jugador cae en ellas, avanza 5 (es decir, va a la 14 o 33 respectivamente).
+- Cuando un jugador lanza el dado (con un botón LANZAR) luego la ficha se mueve en pantalla avanzando de una casilla en forma continua. Es decir, el jugador no mueve las fichas.
+
+Quiero algunos cambios en las reglas:
+- El orden de los jugadores es aleatorio, y se anuncia al comienzo de la partida.
+- Los desafíos aparecen cuando un jugador cae en dichas casillas, y aparece la pregunta en pantalla. 
+
+Tengo una imagen en buena resolución del tablero. Podríamos usarlo de fondo de pantalla y que las fichas se muevan allí en posiciones prefijadas en la pantalla.
+
+¿Cómo te parece encarar el proyecto? ¿Lo hacemos por etapas? Creo que este proyecto tiene muchas menos clases que el del dominó. ¿Querés que te pase el del dominó para que te copies alguna cosa o es innecesario?

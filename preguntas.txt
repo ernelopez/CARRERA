@@ -1,0 +1,30 @@
+En un triángulo equilátero todos sus lados tienen diferente medida. Falso
+La suma de los ángulos interiores de un triángulo es 360°. Falso
+Un triángulo puede tener dos ángulos rectos. Falso
+Se puede construir un triángulo con lados de 3 cm, 4 cm y 8 cm. Falso
+Se pueden formar muchos triángulos con la medida de dos de sus lados. Verdadero
+Un triángulo rectángulo tiene un ángulo de 90°. Verdadero
+Si un triángulo tiene dos lados iguales, se llama isósceles. Verdadero
+En un triángulo acutángulo, todos los ángulos son agudos. Verdadero
+Se puede construir un triángulo con lados de 5 cm, 3 cm y 6 cm. Verdadero
+En todos los triángulos, los ángulos suma 180°. Verdadero
+Todo rectángulo es cuadrado. Falso
+Un rombo tiene siempre sus ángulos rectos. Falso
+El cuadrado tiene sus cuatro lados iguales y sus ángulos rectos. Verdadero
+El rombo tiene sus cuatro lados iguales. Verdadero
+El cuadrado se puede formar con dos triángulos isósceles rectángulos. Verdadero
+La suma de los ángulos de cualquier cuadrilátero es 360°. Verdadero
+Todo cuadrado es rectángulo. Verdadero
+En un paralelogramo, los lados opuestos son paralelos. Verdadero
+Dos triángulos equiláteros forman un rectángulo. Falso
+Dos triángulos rectángulos pueden formar un rectángulo. Verdadero
+Se puede formar un paralelogramo con una diagonal de 9 cm y lados de 6 cm y 3 cm. Falso
+En un paralelogramo, las diagonales siempre son perpendiculares. Falso
+En un rectángulo, las diagonales se cortan formando ángulos rectos. Falso
+En un rombo, las diagonales son iguales. Falso
+En un rectángulo, las diagonales pueden no ser perpendiculares. Verdadero
+Se puede formar un paralelogramo con una diagonal de 10 cm y lados de 7 cm y 4 cm. Verdadero
+En un paralelogramo, las diagonales se cortan en sus puntos medios. Verdadero
+En un rectángulo, las diagonales son iguales. Verdadero
+En un cuadrado, las diagonales son iguales y perpendiculares. Verdadero
+En un cuadrado, las diagonales se cortan en su puntos medios y lo dividen en cuatro triángulos iguales. Verdadero
