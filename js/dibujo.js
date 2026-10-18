@@ -386,7 +386,7 @@ Juego.prototype.dibujarAyudaCartel = function() {
         "1. Los jugadores comienzan en el casillero de SALIDA.",
         "2. El orden de turnos se sortea al inicio de la partida.",
         "3. Cada jugador tira el dado y avanza esa cantidad de casillas.",
-        "4. Al caer en un casillero especial deberás hacer lo que indique el tablero."
+        "4. Al caer en un casillero especial deberás hacer lo que indique el tablero.",
         "5. Si caés en un casillero DESAFÍO deberás responder una pregunta.",
         "   Si acertás, volvés a tirar.",
         "6. Gana quien llega primero a la LLEGADA, sin importar si te pasás.",
