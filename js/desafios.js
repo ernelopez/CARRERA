@@ -5,7 +5,7 @@ export const DESAFIOS = [
     { pregunta: "La suma de los ángulos interiores de un triángulo es 360°.", respuesta: false },
     { pregunta: "Un triángulo puede tener dos ángulos rectos.", respuesta: false },
     { pregunta: "Se puede construir un triángulo con lados de 3 cm, 4 cm y 8 cm.", respuesta: false },
-    { pregunta: "Se pueden formar muchos triángulos con la medida de dos de sus lados.", respuesta: true },
+    { pregunta: "Se pueden formar muchos triángulos sabiendo las medidas de dos de sus lados.", respuesta: true },
     { pregunta: "Un triángulo rectángulo tiene un ángulo de 90°.", respuesta: true },
     { pregunta: "Si un triángulo tiene dos lados iguales, se llama isósceles.", respuesta: true },
     { pregunta: "En un triángulo acutángulo, todos los ángulos son agudos.", respuesta: true },
