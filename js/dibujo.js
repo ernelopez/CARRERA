@@ -477,11 +477,11 @@ Juego.prototype.dibujarDesafio = function() {
     ctx.strokeRect(xRect, yRect, anchoRect, altoRect);
 
     // Título con el nombre del jugador
-    const fuenteJug = `${this.tamanoFuente}px Junegull`;
+    const fuenteJug = `${this.tamanoFuenteGrande}px Junegull`;
     const jugador = this.partida.jugadores[this.desafioJugador];
     dibujarTexto(ctx, `Desafío para ${jugador.nombre}`,
                  this.anchoPantalla / 2,
-                 yModal + Math.floor(30 * esc),
+                 yModal - Math.floor(20 * esc),
                  fuenteJug, jugador.color, true);
 
     // 3) Pregunta dentro del rectángulo blanco (en negro)
