@@ -3,7 +3,7 @@ import {
     ANCHO_PANTALLA, ALTO_PANTALLA,
     ALTO_BARRA_SUP, ALTO_BARRA_INF,
     POSICIONES_CASILLAS, ULTIMA_CASILLA, CASILLA_LLEGADA,
-    CASILLAS_DESAFIO, CASILLAS_PERDER_TURNO,
+    CASILLAS_DESAFIO, CASILLAS_DESAFIO_ESPECIAL, CASILLAS_PERDER_TURNO,
     CASILLAS_RETROCEDER, CASILLAS_AVANZAR,
     ARCHIVO_TABLERO,
     MAX_JUGADORES, COLORES_JUGADORES,
@@ -155,12 +155,17 @@ export class Juego {
         this.tiempoProxPaso = 0;      // timestamp del próximo paso
         this.pasoDuracion = 400;      // ms por casilla
         this.movimientoEsEspecial = false;
+        this.colaAnimaciones = [];              // [{ idx, destino }]
+        this.esAnimacionRetrocesoEspecial = false;
 
         // Desafío en curso
         this.mostrarDesafio = false;     // ya lo tenés
         this.desafioActual = null;       // ya lo tenés
         this.resultadoDesafio = null;    // 'correcto' | 'incorrecto' | null
         this.tiempoResultadoDesafio = 0;
+        this.desafioEsEspecial = false;
+        this.esperandoTiradaEspecial = false;   // true cuando el jugador debe tirar el dado para el retroceso especial
+        this.tipoRetrocesoEspecial = null;      // 'primero' | 'activo' | null
     }
 
     async cargarRecursos() {
@@ -552,10 +557,7 @@ export class Juego {
         this.ultimoDado = null;
         this.actualizarBotones();
     }
-    responderDesafio() {
-        this.mostrarDesafio = false;
-        this.actualizarBotones();
-    }
+    
     reiniciarPartida() {
         this.partida = null;
         this.nombresIngresados = false;
@@ -574,6 +576,11 @@ export class Juego {
         this.movimientoEsEspecial = false;
         this.resultadoDesafio = null;
         this.desafioJugador = null;
+        this.desafioEsEspecial = false;
+        this.esperandoTiradaEspecial = false;
+        this.tipoRetrocesoEspecial = null;
+        this.colaAnimaciones = [];
+        this.esAnimacionRetrocesoEspecial = false;
         this.iniciarMusica();
     }
 
@@ -602,7 +609,11 @@ export class Juego {
                 this.mensajeColor = j.color;
 
                 // Arrancar movimiento
-                this.iniciarMovimiento(this.ultimoDado);
+                if (this.esperandoTiradaEspecial) {
+                    this.aplicarRetrocesoEspecial(this.ultimoDado);
+                } else {
+                    this.iniciarMovimiento(this.ultimoDado);
+                }
             }
             return;
         }
@@ -622,8 +633,13 @@ export class Juego {
                     } else {
                         // Llegó al destino
                         this.animandoFicha = false;
+
+                        if (this.esAnimacionRetrocesoEspecial) {
+                            this.siguienteAnimacionEspecial();
+                            return;
+                        }
+
                         if (this.movimientoEsEspecial) {
-                            // Fin de un retroceso/avance especial: no aplicar otra casilla especial
                             this.movimientoEsEspecial = false;
                             this.finalizarTurno();
                         } else {
@@ -715,7 +731,7 @@ export class Juego {
             setTimeout(() => {
                 if (!this.partida || this.partida.terminada) return;
                 this.finalizarTurno();
-            }, 900);
+            }, 2000);
             return;
         }
 
@@ -747,6 +763,12 @@ export class Juego {
             return;
         }
 
+        // --- DESAFÍO ESPECIAL ---
+        if (CASILLAS_DESAFIO_ESPECIAL.includes(pos)) {
+            this.iniciarDesafioEspecial(idx);
+            return;
+        }
+
         // --- Casilla común: pasar turno ---
         this.finalizarTurno();
     }
@@ -767,6 +789,16 @@ export class Juego {
         // Sacar carta del mazo (sin reposición)
         this.desafioActual = this.sacarCartaDesafio();
         this.desafioJugador = idx;
+        this.desafioEsEspecial = false;   // ← NUEVO
+        this.mostrarDesafio = true;
+        this.resultadoDesafio = null;
+        this.actualizarBotones();
+    }
+
+    iniciarDesafioEspecial(idx) {
+        this.desafioActual = this.sacarCartaDesafio();
+        this.desafioJugador = idx;
+        this.desafioEsEspecial = true;
         this.mostrarDesafio = true;
         this.resultadoDesafio = null;
         this.actualizarBotones();
@@ -785,34 +817,188 @@ export class Juego {
         return this.mazoDesafios.pop();
     }
 
+    prepararTiradaEspecial(correcto) {
+        const idx = this.desafioJugador;
+        const posiciones = this.partida.posiciones;
+        const maxPos = Math.max(...posiciones);
+        const minPos = Math.min(...posiciones);
+
+        if (correcto) {
+            // Acierta: si es primero (incluye empates), no pasa nada
+            if (posiciones[idx] === maxPos) {
+                this.mensaje = "Es primero: no retrocede nadie";
+                this.tiempoMensaje = Date.now();
+                this.mensajeColor = COLOR_TEXTO;
+                this.finalizarTurno();
+                return;
+            }
+            this.tipoRetrocesoEspecial = 'primero';
+            this.mensaje = "Tirá el dado: retroceden los primeros";
+        } else {
+            // Falla: si es último (incluye empates), no pasa nada
+            if (posiciones[idx] === minPos) {
+                this.mensaje = "Es último: no retrocede";
+                this.tiempoMensaje = Date.now();
+                this.mensajeColor = COLOR_TEXTO;
+                this.finalizarTurno();
+                return;
+            }
+            this.tipoRetrocesoEspecial = 'activo';
+            this.mensaje = "Tirá el dado para retroceder";
+        }
+
+        this.tiempoMensaje = Date.now();
+        this.mensajeColor = COLOR_TEXTO;
+        this.esperandoTiradaEspecial = true;
+        this.actualizarBotones();
+    }
+
+    aplicarRetrocesoEspecial(valor) {
+        const posiciones = this.partida.posiciones;
+        const retroceden = [];
+
+        if (this.tipoRetrocesoEspecial === 'primero') {
+            const maxPos = Math.max(...posiciones);
+            for (let i = 0; i < posiciones.length; i++) {
+                if (posiciones[i] === maxPos) {
+                    retroceden.push({ idx: i, destino: Math.max(0, posiciones[i] - valor) });
+                }
+            }
+        } else if (this.tipoRetrocesoEspecial === 'activo') {
+            const idx = this.desafioJugador;
+            retroceden.push({ idx, destino: Math.max(0, posiciones[idx] - valor) });
+        }
+
+        this.esperandoTiradaEspecial = false;
+        this.tipoRetrocesoEspecial = null;
+
+        if (retroceden.length === 0) {
+            this.finalizarTurno();
+            return;
+        }
+
+        // Mensaje
+        const nombres = retroceden.map(r => this.partida.jugadores[r.idx].nombre).join(', ');
+        this.mensaje = `Retroceden ${valor}: ${nombres}`;
+        this.tiempoMensaje = Date.now();
+        this.mensajeColor = COLOR_TEXTO;
+        this.reproducirSonido(this.sonidoRetroceder);
+
+        // Preparar la cola y arrancar la primera animación
+        this.colaAnimaciones = retroceden;
+        this.esAnimacionRetrocesoEspecial = true;
+
+        // Pausa antes de arrancar, como con retroceder/avanzar (600ms)
+        setTimeout(() => {
+            if (!this.partida || this.partida.terminada) return;
+            this.siguienteAnimacionEspecial();
+        }, 600);
+    }
+
+    siguienteAnimacionEspecial() {
+        if (this.colaAnimaciones.length === 0) {
+            this.esAnimacionRetrocesoEspecial = false;
+            this.finalizarTurno();
+            return;
+        }
+
+        const { idx, destino } = this.colaAnimaciones.shift();
+        const posActual = this.partida.posiciones[idx];
+
+        if (posActual === destino) {
+            // No se mueve; pasar al siguiente
+            this.siguienteAnimacionEspecial();
+            return;
+        }
+
+        this.animandoFicha = true;
+        this.jugadorAnimIdx = idx;
+        this.casillaAnimActual = posActual;
+        this.casillaAnimDestino = destino;
+        this.movimientoEsEspecial = false;
+        this.tiempoProxPaso = Date.now() + 300;
+        this.actualizarBotones();
+    }
+
     responderDesafio(esVerdadero) {
         if (!this.desafioActual) return;
 
         const correcto = (esVerdadero === this.desafioActual.respuesta);
+        const esEspecial = this.desafioEsEspecial;   // ← capturar ANTES del setTimeout
 
-        // Cerrar modal
         this.mostrarDesafio = false;
-
-        // Mostrar cartel de resultado
         this.resultadoDesafio = correcto ? 'correcto' : 'incorrecto';
         this.tiempoResultadoDesafio = Date.now();
-
-        // Reproducir sonido
         this.reproducirSonido(correcto ? this.sonidoCoin : this.sonidoError);
 
-        // Después de un rato, continuar
         const DURACION_RESULTADO = 1200;
         setTimeout(() => {
             if (!this.partida || this.partida.terminada) return;
             this.resultadoDesafio = null;
 
+            if (esEspecial) {
+                // Desafío especial: preparar para que el jugador tire el dado
+                this.prepararTiradaEspecial(correcto);
+                return;
+            }
+
+            // Desafío normal (comportamiento original)
             if (correcto) {
-                // Vuelve a tirar: no pasa turno
-                this.actualizarBotones();
+                const nombre = this.partida.jugadores[this.desafioJugador].nombre;
+                this.mensaje = `${nombre} tira de nuevo`;
+                this.tiempoMensaje = Date.now();
+                this.mensajeColor = this.partida.jugadores[this.desafioJugador].color;
+                this.actualizarBotones();  // vuelve a tirar
             } else {
-                // Falla: pasa turno
                 this.finalizarTurno();
             }
         }, DURACION_RESULTADO);
+    }
+
+    resolverDesafioEspecial(correcto) {
+        const idx = this.desafioJugador;
+        const posiciones = this.partida.posiciones;
+
+        const maxPos = Math.max(...posiciones);
+        const minPos = Math.min(...posiciones);
+
+        if (correcto) {
+            // Acierta: si es primero (incluye empates), no pasa nada
+            if (posiciones[idx] === maxPos) {
+                this.finalizarTurno();
+                return;
+            }
+            // No es primero: tira el dado y todos los primeros retroceden
+            const valor = 1 + Math.floor(Math.random() * 6);
+            const retroceden = [];
+            for (let i = 0; i < posiciones.length; i++) {
+                if (posiciones[i] === maxPos) {
+                    posiciones[i] = Math.max(0, posiciones[i] - valor);
+                    retroceden.push(i);
+                }
+            }
+            const nombres = retroceden.map(i => this.partida.jugadores[i].nombre).join(', ');
+            this.mensaje = `Retroceden ${valor}: ${nombres}`;
+            this.tiempoMensaje = Date.now();
+            this.mensajeColor = COLOR_TEXTO;
+            this.reproducirSonido(this.sonidoRetroceder);
+            this.finalizarTurno();
+            return;
+        }
+
+        // Falla: si es último (incluye empates), no pasa nada
+        if (posiciones[idx] === minPos) {
+            this.finalizarTurno();
+            return;
+        }
+        // No es último: tira el dado y retrocede solo él
+        const valor = 1 + Math.floor(Math.random() * 6);
+        posiciones[idx] = Math.max(0, posiciones[idx] - valor);
+        const nombre = this.partida.jugadores[idx].nombre;
+        this.mensaje = `${nombre} retrocede ${valor}`;
+        this.tiempoMensaje = Date.now();
+        this.mensajeColor = COLOR_TEXTO;
+        this.reproducirSonido(this.sonidoRetroceder);
+        this.finalizarTurno();
     }
 }

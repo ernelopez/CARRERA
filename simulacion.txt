@@ -1,0 +1,70 @@
+=================================================================
+SIMULACIÓN: 10000 PARTIDAS DE UN SOLO JUGADOR
+=================================================================
+
+--- CANTIDAD DE DESAFÍOS POR PARTIDA ---
+  media: 2.25
+  mínimo: 0
+  máximo: 8
+
+  Distribución (desafíos -> partidas):
+     0 desafíos:    684 partidas
+     1 desafíos:   2285 partidas
+     2 desafíos:   3099 partidas
+     3 desafíos:   2328 partidas
+     4 desafíos:   1110 partidas
+     5 desafíos:    402 partidas
+     6 desafíos:     67 partidas
+     7 desafíos:     24 partidas
+     8 desafíos:      1 partidas
+
+--- CANTIDAD DE TIRADAS DEL DADO POR PARTIDA ---
+  media: 12.39
+  mínimo: 7
+  máximo: 27
+
+  Distribución (tiradas -> partidas):
+      7 tiradas:     48 partidas
+      8 tiradas:    270 partidas
+      9 tiradas:    711 partidas
+     10 tiradas:   1339 partidas
+     11 tiradas:   1688 partidas
+     12 tiradas:   1740 partidas
+     13 tiradas:   1372 partidas
+     14 tiradas:    986 partidas
+     15 tiradas:    666 partidas
+     16 tiradas:    445 partidas
+     17 tiradas:    311 partidas
+     18 tiradas:    190 partidas
+     19 tiradas:    102 partidas
+     20 tiradas:     58 partidas
+     21 tiradas:     28 partidas
+     22 tiradas:     18 partidas
+     23 tiradas:     14 partidas
+     24 tiradas:      9 partidas
+     25 tiradas:      3 partidas
+     26 tiradas:      1 partidas
+     27 tiradas:      1 partidas
+
+--- RANKING DE CAÍDAS EN CASILLAS DE DESAFÍO ---
+  Total: 22495 caídas en desafíos
+  Casilla 35:   3353 caídas  ( 14.9%)
+  Casilla 23:   3046 caídas  ( 13.5%)
+  Casilla 39:   2997 caídas  ( 13.3%)
+  Casilla 26:   2891 caídas  ( 12.9%)
+  Casilla 30:   2868 caídas  ( 12.7%)
+  Casilla  4:   2657 caídas  ( 11.8%)
+  Casilla 10:   2494 caídas  ( 11.1%)
+  Casilla 15:   2189 caídas  (  9.7%)
+
+--- RANKING DE OTRAS CASILLAS ESPECIALES ---
+  Total: 24326 caídas en especiales
+  Casilla 21 [RETROCEDÉ 5 -> 16     ]:   3961 caídas  ( 16.3%)
+  Casilla 19 [PERDÉS TURNO          ]:   3881 caídas  ( 16.0%)
+  Casilla 34 [RETROCEDÉ 5 -> 29     ]:   3133 caídas  ( 12.9%)
+  Casilla 28 [AVANZÁ 5 -> 33        ]:   3010 caídas  ( 12.4%)
+  Casilla 37 [PERDÉS TURNO          ]:   2938 caídas  ( 12.1%)
+  Casilla  9 [AVANZÁ 5 -> 14        ]:   2790 caídas  ( 11.5%)
+  Casilla  7 [PERDÉS TURNO          ]:   2529 caídas  ( 10.4%)
+  Casilla 13 [PERDÉS TURNO          ]:   2084 caídas  (  8.6%)
+

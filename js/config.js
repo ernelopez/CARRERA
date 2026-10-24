@@ -59,6 +59,7 @@ export const CASILLAS_DESAFIO      = [4, 10, 15, 23, 26, 30, 35, 39];
 export const CASILLAS_PERDER_TURNO = [7, 13, 19, 37];
 export const CASILLAS_RETROCEDER   = { 21: 16, 34: 29 };
 export const CASILLAS_AVANZAR      = { 9: 14, 28: 33 };
+export const CASILLAS_DESAFIO_ESPECIAL = [3, 8, 12, 18, 24, 29, 31, 36];
 
 export const ULTIMA_CASILLA = 40;
 export const CASILLA_LLEGADA = 41;
@@ -89,3 +90,5 @@ export const IMG_BOTON_LANZAR   = 'assets/boton_lanzar.png';
 export const IMG_BOTON_PASAR    = 'assets/boton_pasar.png';
 export const IMG_BAA            = 'assets/BAA2.png';
 export const IMG_FONDO_DESAFIO = 'assets/fondo.png';
+
+export const DURACION_MENSAJE_MS = 2500;

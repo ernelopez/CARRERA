@@ -5,7 +5,7 @@ import {
 } from './juego.js';
 import {
     POSICIONES_CASILLAS, ALTO_BARRA_SUP, ALTO_BARRA_INF,
-    MAX_JUGADORES, COLORES_JUGADORES,
+    MAX_JUGADORES, COLORES_JUGADORES, DURACION_MENSAJE_MS, 
 } from './config.js';
 
 function medirTexto(ctx, texto, fuente) {
@@ -250,7 +250,7 @@ Juego.prototype.dibujarBarraSuperior = function() {
                      fuenteTurno, j.color, true);
 
         // Mensaje temporal debajo del turno (más chiquito)
-        if (this.mensaje && (Date.now() - this.tiempoMensaje < 1500)) {
+        if (this.mensaje && (Date.now() - this.tiempoMensaje < DURACION_MENSAJE_MS)) {
             const fuenteMsg = `${this.tamanoFuenteChica}px Junegull`;
             dibujarTexto(ctx, this.mensaje,
                          this.anchoPantalla / 2,
@@ -386,10 +386,13 @@ Juego.prototype.dibujarAyudaCartel = function() {
         "1. Los jugadores comienzan en el casillero de SALIDA.",
         "2. El orden de turnos se sortea al inicio de la partida.",
         "3. Cada jugador tira el dado y avanza esa cantidad de casillas.",
-        "4. Al caer en un casillero especial deberás hacer lo que indique el tablero.",
+        "4. Al caer en un casillero verde deberás hacer lo que indique el tablero.",
         "5. Si caés en un casillero DESAFÍO deberás responder una pregunta.",
         "   Si acertás, volvés a tirar.",
-        "6. Gana quien llega primero a la LLEGADA, sin importar si te pasás.",
+        "6. Si caés en un casillero DESAFÍO ESPECIAL deberás responder una pregunta.",
+        "   Si acertás, volvés a tirar y quienes estén primeros retrocederán esa cantidad.",
+        "   Si no acertás, volvés a tirar y deberás retroceder esa cantidad.",
+        "7. Gana quien llega primero a la LLEGADA, sin importar si te pasás.",
     ];
     let yl = y + Math.floor(115 * esc);
     for (const l of lineas) {
@@ -476,10 +479,11 @@ Juego.prototype.dibujarDesafio = function() {
     ctx.lineWidth = Math.max(1, Math.floor(2 * esc));
     ctx.strokeRect(xRect, yRect, anchoRect, altoRect);
 
-    // Título con el nombre del jugador
+    // Título con el nombre del jugador (varía si es desafío especial)
     const fuenteJug = `${this.tamanoFuenteGrande}px Junegull`;
     const jugador = this.partida.jugadores[this.desafioJugador];
-    dibujarTexto(ctx, `Desafío para ${jugador.nombre}`,
+    const etiqueta = this.desafioEsEspecial ? "Desafío especial para" : "Desafío para";
+    dibujarTexto(ctx, `${etiqueta} ${jugador.nombre}`,
                  this.anchoPantalla / 2,
                  yModal - Math.floor(20 * esc),
                  fuenteJug, jugador.color, true);
