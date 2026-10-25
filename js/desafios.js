@@ -52,4 +52,9 @@ export const DESAFIOS = [
     { pregunta: "Si un cuadrilátero tiene sus cuatro ángulos rectos, entonces es un rectángulo.", respuesta: true },
     { pregunta: "Dos triángulos rectángulos isósceles iguales pueden formar un cuadrado.", respuesta: true },
     { pregunta: "En un paralelogramo, los ángulos opuestos son iguales.", respuesta: true },
+    { pregunta: "Para que se pueda construir un triángulo, cada lado debe ser menor que la suma de los otros dos.", respuesta: true },
+    { pregunta: "No se puede construir un triángulo con lados de 4 cm, 5 cm y 9 cm.", respuesta: true },
+    { pregunta: "Se puede construir un triángulo con lados de 6 cm, 6 cm y 13 cm.", respuesta: false },
+    { pregunta: "En todo triángulo, la suma de dos lados siempre es mayor que el tercero.", respuesta: true },
+    { pregunta: "Se puede construir un triángulo con lados de 10 cm, 7 cm y 2 cm.", respuesta: false },
 ];
