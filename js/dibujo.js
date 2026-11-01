@@ -5,7 +5,7 @@ import {
 } from './juego.js';
 import {
     POSICIONES_CASILLAS, ALTO_BARRA_SUP, ALTO_BARRA_INF,
-    MAX_JUGADORES, COLORES_JUGADORES, DURACION_MENSAJE_MS, 
+    MAX_JUGADORES, COLORES_JUGADORES, DURACION_MENSAJE_MS, RELACION_FONDO,
 } from './config.js';
 
 function medirTexto(ctx, texto, fuente) {
@@ -455,8 +455,8 @@ Juego.prototype.dibujarDesafio = function() {
     ctx.fillRect(0, 0, this.anchoPantalla, this.altoPantalla);
 
     // Dimensiones de la tarjeta (2:1 para no deformar fondo.png)
-    const anchoModal = Math.floor(800 * esc);
-    const altoModal  = Math.floor(400 * esc);
+    const anchoModal = Math.floor(600 * esc);
+    const altoModal  = Math.floor(anchoModal / RELACION_FONDO);
     const xModal = Math.floor((this.anchoPantalla - anchoModal) / 2);
     const yModal = Math.floor((this.altoPantalla  - altoModal ) / 2);
 
@@ -472,7 +472,7 @@ Juego.prototype.dibujarDesafio = function() {
     }
 
     // 2) Rectángulo blanco centrado: 60% del ancho de la tarjeta
-    const anchoRect = Math.floor(anchoModal * 0.6);
+    const anchoRect = Math.floor(anchoModal * 0.8);
     const altoRect  = Math.floor(altoModal  * 0.7);
     const xRect = xModal + Math.floor((anchoModal - anchoRect) / 2);
     const yRect = yModal + Math.floor((altoModal  - altoRect ) / 2);
@@ -497,7 +497,7 @@ Juego.prototype.dibujarDesafio = function() {
     const etiqueta = this.desafioEsEspecial ? "Desafío especial para" : "Desafío para";
     dibujarTexto(ctx, `${etiqueta} ${jugador.nombre}`,
                  this.anchoPantalla / 2,
-                 yModal - Math.floor(20 * esc),
+                 yModal - Math.floor(45 * esc),
                  fuenteJug, jugador.color, true);
 
     // 3) Pregunta dentro del rectángulo blanco (en negro)

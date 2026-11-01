@@ -109,7 +109,7 @@ export class Juego {
         this.tamanoFuenteGrande = 48;
         this.tamanoFuenteInput = 28;
         this.tamanoFuenteChica = 16;
-        this.tamanoFuentePregunta = 32;
+        this.tamanoFuentePregunta = 40;
 
         // Botones
         this.botones = [];
@@ -229,7 +229,7 @@ export class Juego {
         this.tamanoFuenteGrande  = Math.max(16, Math.floor(42 * this.escala));
         this.tamanoFuenteInput   = Math.max(14, Math.floor(28 * this.escala));
         this.tamanoFuenteChica   = Math.max(10, Math.floor(16 * this.escala));
-        this.tamanoFuentePregunta= Math.max(16, Math.floor(32 * this.escala));
+        this.tamanoFuentePregunta= Math.max(16, Math.floor(40 * this.escala));
 
         // Calcular espacio disponible para el tablero
         if (this.imgTableroOriginal) {
@@ -359,7 +359,7 @@ export class Juego {
         //this.botones.push(this.botonLanzar);
 
         // --- Botones V/F del desafío (por fuera de la tarjeta, debajo) ---
-        const anchoModal = Math.floor(800 * esc);
+        const anchoModal = Math.floor(600 * esc);
         const altoModal  = Math.floor(400 * esc);
         const xModal = Math.floor((this.anchoPantalla - anchoModal) / 2);
         const yModal = Math.floor((this.altoPantalla  - altoModal ) / 2);

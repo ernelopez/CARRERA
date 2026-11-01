@@ -8,6 +8,8 @@ export const ALTO_PANTALLA  = 750;
 export const ALTO_BARRA_SUP = 80;
 export const ALTO_BARRA_INF = 100;
 
+export const RELACION_FONDO = 600 / 375;   // ancho / alto de fondo.png
+
 // 42 posiciones: [0] = SALIDA, [1..40] = casillas, [41] = LLEGADA
 export const POSICIONES_CASILLAS = [
     { x: 796,  y: 756  },  // 0  SALIDA
