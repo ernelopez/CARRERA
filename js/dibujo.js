@@ -243,20 +243,11 @@ Juego.prototype.dibujarBarraSuperior = function() {
     // Turno centrado
     if (this.partida && !this.partida.terminada) {
         const j = this.jugadorActual();
-        const fuenteTurno = `${this.tamanoFuenteGrande}px Junegull`;
+        const fuenteTurno = `${Math.floor(this.tamanoFuenteGrande * 1.3)}px Junegull`;
         dibujarTexto(ctx, `Turno: ${j.nombre}`,
                      this.anchoPantalla / 2,
-                     Math.floor(alto / 2 - 4 * esc),
+                     Math.floor(alto / 2),
                      fuenteTurno, j.color, true);
-
-        // Mensaje temporal debajo del turno (más chiquito)
-        if (this.mensaje && (Date.now() - this.tiempoMensaje < DURACION_MENSAJE_MS)) {
-            const fuenteMsg = `${this.tamanoFuenteChica}px Junegull`;
-            dibujarTexto(ctx, this.mensaje,
-                         this.anchoPantalla / 2,
-                         alto - Math.floor(10 * esc),
-                         fuenteMsg, this.mensajeColor, true);
-        }
     } else if (this.partida && this.partida.terminada) {
         // Ganador
         const fuenteTurno = `${this.tamanoFuenteGrande}px Junegull`;
@@ -302,9 +293,24 @@ Juego.prototype.dibujarBarraInferior = function() {
     if (caraVisible && this.imgDado[caraVisible - 1]) {
         const tamDado = Math.floor(70 * esc);
         const xDado = this.botonLanzar.x + this.botonLanzar.ancho + Math.floor(15 * esc);
-        const yDado = y + Math.floor((alto - tamDado) / 2);
+        //const yDado = y + Math.floor((alto - tamDado) / 2);
+        const yDado = this.botonLanzar.y + Math.floor((this.botonLanzar.alto - tamDado) / 2);
         ctx.drawImage(this.imgDado[caraVisible - 1], xDado, yDado, tamDado, tamDado);
     }
+
+    // Mensaje (centrado en la franja inferior)
+    const mostrarMensaje = this.mensaje && (
+        this.mensajePersistente ||
+        (Date.now() - this.tiempoMensaje < DURACION_MENSAJE_MS)
+    );
+    if (mostrarMensaje) {
+        const fuenteMsg = `${Math.floor(this.tamanoFuenteGrande * 0.8)}px Junegull`;
+        dibujarTexto(ctx, this.mensaje,
+                     this.anchoPantalla / 2,
+                     y + Math.floor(alto / 2),
+                     fuenteMsg, this.mensajeColor, true);
+    }
+
 
     // Lista de jugadores (der) en el orden de turno
     if (this.partida) {
@@ -313,15 +319,21 @@ Juego.prototype.dibujarBarraInferior = function() {
         // Calcular tamaño de fuente y salto según cantidad
         let fuentePx;
         let salto;
-        if (nJug <= 3) {
-            fuentePx = Math.floor(18 * esc);
-            salto    = Math.floor(24 * esc);
-        } else if (nJug <= 4) {
-            fuentePx = Math.floor(16 * esc);
-            salto    = Math.floor(20 * esc);
-        } else {
-            fuentePx = Math.floor(13 * esc);
-            salto    = Math.floor(15 * esc);
+        if (nJug === 2) {
+            fuentePx = Math.floor(32 * esc);
+            salto    = Math.floor(32 * esc);
+        } else if (nJug === 3) {
+            fuentePx = Math.floor(28 * esc);
+            salto    = Math.floor(27 * esc);
+        } else if (nJug === 4) {
+            fuentePx = Math.floor(22 * esc);
+            salto    = Math.floor(22 * esc);
+        } else if (nJug === 5) {
+            fuentePx = Math.floor(17 * esc);
+            salto    = Math.floor(18 * esc);
+        } else {  // 6
+            fuentePx = Math.floor(15 * esc);
+            salto    = Math.floor(14 * esc);
         }
         const fuente = `${fuentePx}px Junegull`;
 

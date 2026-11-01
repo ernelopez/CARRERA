@@ -73,6 +73,7 @@ export class Juego {
 
         // Mensajes
         this.mensaje = "";
+        this.mensajePersistente = false;
         this.tiempoMensaje = 0;
         this.mensajeColor = COLOR_TEXTO;
 
@@ -332,17 +333,30 @@ export class Juego {
         const altoBarraInf = Math.floor(ALTO_BARRA_INF * esc);
         const yBarraInf = this.altoPantalla - altoBarraInf;
 
-        // Botón TIRAR DADO (un poco a la izquierda del centro, para dejar lugar al dado)
+        // Botón TIRAR DADO (esquina inferior izquierda del tablero, con offset)
         const anchoLanzar = Math.floor(200 * esc);
         const altoLanzar  = Math.floor(60 * esc);
         const desplazamientoIzq = Math.floor(50 * esc);  // ← cuánto correrlo
+        const offsetBoton = Math.floor(10 * esc);   // separación del borde del tablero
         this.botonLanzar = new Boton(
             centroX - Math.floor(anchoLanzar / 2) - desplazamientoIzq,
-            yBarraInf + Math.floor((altoBarraInf - altoLanzar) / 2),
+            this.offsetTableroY + this.altoTableroDib - altoLanzar - offsetBoton,
             anchoLanzar, altoLanzar,
             "TIRAR DADO", this.imgBotonLanzar
         );
         this.botones.push(this.botonLanzar);
+
+        // Botón TIRAR DADO (un poco a la izquierda del centro, para dejar lugar al dado)
+        //const anchoLanzar = Math.floor(200 * esc);
+        //const altoLanzar  = Math.floor(60 * esc);
+        //const desplazamientoIzq = Math.floor(50 * esc);  // ← cuánto correrlo
+        //this.botonLanzar = new Boton(
+        //    centroX - Math.floor(anchoLanzar / 2) - desplazamientoIzq,
+        //    yBarraInf + Math.floor((altoBarraInf - altoLanzar) / 2),
+        //    anchoLanzar, altoLanzar,
+        //    "TIRAR DADO", this.imgBotonLanzar
+        //);
+        //this.botones.push(this.botonLanzar);
 
         // --- Botones V/F del desafío (por fuera de la tarjeta, debajo) ---
         const anchoModal = Math.floor(800 * esc);
@@ -488,7 +502,10 @@ export class Juego {
             }
         } else if (evento.key.length === 1) {
             if (this.ingresandoNombre >= 0) {
-                this.nombres[this.ingresandoNombre] += evento.key;
+                // Permitir solo letras, números y espacio
+                if (/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ ]$/.test(evento.key)) {
+                    this.nombres[this.ingresandoNombre] += evento.key;
+                }
             }
         }
         return true;
@@ -549,7 +566,7 @@ export class Juego {
         if (this.animandoDado || this.animandoFicha) return;
         if (!this.partida || this.partida.terminada) return;
         if (this.mostrarDesafio) return;
-
+        this.limpiarMensaje();
         this.reproducirSonido(this.sonidoDado);
         this.animandoDado = true;
         this.tiempoInicioDado = Date.now();
@@ -567,6 +584,7 @@ export class Juego {
         this.mostrarAyuda = false;
         this.desafioActual = null;
         this.mensaje = "";
+        this.mensajePersistente = false;
         this.ultimoDado = null;
         this.animandoDado = false;
         this.animandoFicha = false;
@@ -601,12 +619,14 @@ export class Juego {
                 this.ultimoDado = 1 + Math.floor(Math.random() * 6);
                 this.dadoMostrado = this.ultimoDado;
                 this.animandoDado = false;
-                //this.reproducirSonido(this.sonidoCoin);
 
-                this.mensaje = `¡Sacaste ${this.ultimoDado}!`;
-                this.tiempoMensaje = Date.now();
                 const j = this.jugadorActual();
-                this.mensajeColor = j.color;
+                this.setMensaje(`¡Sacaste ${this.ultimoDado}!`, j.color, true);
+                
+                //this.mensaje = `¡Sacaste ${this.ultimoDado}!`;
+                //this.tiempoMensaje = Date.now();
+                //const j = this.jugadorActual();
+                //this.mensajeColor = j.color;
 
                 // Arrancar movimiento
                 if (this.esperandoTiradaEspecial) {
@@ -674,6 +694,8 @@ export class Juego {
         const idx = this.jugadorAnimIdx;
         const pos = this.partida.posiciones[idx];
 
+        this.limpiarMensaje();
+
         // ¿Llegó?
         if (pos >= CASILLA_LLEGADA) {
             this.partida.terminada = true;
@@ -698,6 +720,7 @@ export class Juego {
 
     finalizarTurno() {
         const n = this.partida.orden.length;
+        this.limpiarMensaje();
 
         // Avanzar al siguiente en el orden
         this.partida.turnoOrdenIdx =
@@ -826,29 +849,31 @@ export class Juego {
         if (correcto) {
             // Acierta: si es primero (incluye empates), no pasa nada
             if (posiciones[idx] === maxPos) {
-                this.mensaje = "Es primero: no retrocede nadie";
-                this.tiempoMensaje = Date.now();
-                this.mensajeColor = COLOR_TEXTO;
-                this.finalizarTurno();
+                this.setMensaje("Es primero: no retrocede nadie", COLOR_TEXTO, false);
+                setTimeout(() => {
+                    if (!this.partida || this.partida.terminada) return;
+                    this.finalizarTurno();
+                }, 2500);
                 return;
             }
             this.tipoRetrocesoEspecial = 'primero';
-            this.mensaje = "Tirá el dado: retroceden los primeros";
+            this.setMensaje("Tirá el dado: retroceden los primeros", COLOR_TEXTO, true);  // ← persistente
+            //this.mensaje = "Tirá el dado: retroceden los primeros";
         } else {
             // Falla: si es último (incluye empates), no pasa nada
             if (posiciones[idx] === minPos) {
-                this.mensaje = "Es último: no retrocede";
-                this.tiempoMensaje = Date.now();
-                this.mensajeColor = COLOR_TEXTO;
-                this.finalizarTurno();
+                this.setMensaje("Es primero: no retrocede nadie", COLOR_TEXTO, false);
+                setTimeout(() => {
+                    if (!this.partida || this.partida.terminada) return;
+                    this.finalizarTurno();
+                }, 2500);
                 return;
             }
             this.tipoRetrocesoEspecial = 'activo';
-            this.mensaje = "Tirá el dado para retroceder";
+            this.setMensaje("Tirá el dado para retroceder", COLOR_TEXTO, true);  // ← persistente
+            //this.mensaje = "Tirá el dado para retroceder";
         }
 
-        this.tiempoMensaje = Date.now();
-        this.mensajeColor = COLOR_TEXTO;
         this.esperandoTiradaEspecial = true;
         this.actualizarBotones();
     }
@@ -898,6 +923,7 @@ export class Juego {
     siguienteAnimacionEspecial() {
         if (this.colaAnimaciones.length === 0) {
             this.esAnimacionRetrocesoEspecial = false;
+            this.limpiarMensaje();
             this.finalizarTurno();
             return;
         }
@@ -944,10 +970,12 @@ export class Juego {
 
             // Desafío normal (comportamiento original)
             if (correcto) {
-                const nombre = this.partida.jugadores[this.desafioJugador].nombre;
-                this.mensaje = `${nombre} tira de nuevo`;
-                this.tiempoMensaje = Date.now();
-                this.mensajeColor = this.partida.jugadores[this.desafioJugador].color;
+                const jugador = this.partida.jugadores[this.desafioJugador];
+                this.setMensaje(`${jugador.nombre} tira de nuevo`, jugador.color, true);  // ← persistente
+                //const nombre = this.partida.jugadores[this.desafioJugador].nombre;
+                //this.mensaje = `${nombre} tira de nuevo`;
+                //this.tiempoMensaje = Date.now();
+                //this.mensajeColor = this.partida.jugadores[this.desafioJugador].color;
                 this.actualizarBotones();  // vuelve a tirar
             } else {
                 this.finalizarTurno();
@@ -1000,5 +1028,18 @@ export class Juego {
         this.mensajeColor = COLOR_TEXTO;
         this.reproducirSonido(this.sonidoRetroceder);
         this.finalizarTurno();
+    }
+
+
+    setMensaje(texto, color, persistente = false) {
+        this.mensaje = texto;
+        this.mensajeColor = color;
+        this.tiempoMensaje = Date.now();
+        this.mensajePersistente = persistente;
+    }
+
+    limpiarMensaje() {
+        this.mensaje = "";
+        this.mensajePersistente = false;
     }
 }
